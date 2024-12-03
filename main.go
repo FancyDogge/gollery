@@ -16,12 +16,21 @@ http.ResponseWriter
 
 мы можем использовать w(response writer) в fmt.Fprint(w, "<h1>ZULUL</h1>"), т.к. он реализует Write интерфейс, который принимает Fprint
 */
-func handlerFunc(w http.ResponseWriter, r *http.Request) {
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	//вообще го смотрит на байты в респонс теле и определяет тип контент тайпа(опять же, вроде бы)
+	//но вот так уот можно установить данный хедер мануально
+	w.Header().Set("Content-Type", "text/plainж charset=utf-8")
 	fmt.Fprint(w, "<h1>ZULUL</h1>")
 }
 
+func contactHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "plain/text; charset=utf-8")
+	fmt.Fprint(w, "<h1>Contact Page</h1>")
+}
+
 func main() {
-	http.HandleFunc("/", handlerFunc)
+	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/contact", contactHandler)
 	fmt.Println("Starting the server on port :3000...")
 	http.ListenAndServe(":3000", nil)
 }
