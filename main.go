@@ -39,6 +39,8 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 		У нашего http.Request есть поле (field) - URL *url.URL
 		Это поинтер на URL struct, у которого в свою очередь есть поле Path string // path (relative paths may omit leading slash)
 		Поэтому мы достаем все это дело через точки .
+
+		URL.RawPath используется вместо URL.Path только если есть кейсы, где нужно отличить, допустим URL-encoded /(в виде %2F) от обычного /
 	*/
 	switch r.URL.Path {
 	case "/":
@@ -47,7 +49,10 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 		contactHandler(w, r)
 	default:
 		//return 404 если пути не существует
-		http.NotFound(w, r)
+		// http.NotFound(w, r)           //Это мой вариант до которго я додумался из документации
+		w.WriteHeader(http.StatusNotFound)      //Это, и строка ниже - подход из туториала, хз, я так понял смысл в том,
+		fmt.Fprint(w, "Sorry, page not found.") //что так у нас больше кастомизации тела ответа
+		// http.Error(w, "Sorry, page not found.", http.StatusNotFound) //еще один вариант из туториала
 	}
 }
 
