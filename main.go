@@ -19,13 +19,28 @@ http.ResponseWriter
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	//вообще го смотрит на байты в респонс теле и определяет тип контент тайпа(опять же, вроде бы)
 	//но вот так уот можно установить данный хедер мануально
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprint(w, "<h1>ZULUL</h1>")
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprint(w, "<h1>Contact Page</h1>")
+}
+
+func faqHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprint(w,
+		`<h1>FAQ Page</h1>
+		<ul>
+			<li>Q: blah blah blah?</li>
+			<li>A: bladfbldjbladlfb</li>
+			<li>Q: blah blah blah?</li>
+			<li>A: bladfbldjbladlfb</li>
+			<li>Q: blah blah blah?</li>
+			<li>A: bladfbldjbladlfb</li>
+		</ul>
+		`)
 }
 
 // func pathHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +65,8 @@ func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		homeHandler(w, r)
 	case "/contact":
 		contactHandler(w, r)
+	case "/faq":
+		faqHandler(w, r)
 	default:
 		http.Error(w, "Sorry, page not found!", http.StatusNotFound)
 	}
