@@ -58,6 +58,9 @@ func pathHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	//добавляем роутер курильщика в рут путь / чтобы там он уже отдавал нужный хэндлер
+	//http.HandleFunc под капотом использует ServeMux. Если юзать ServeMux или то, что его наследует*, то там сложно организовать
+	//работу с дмнамическими параметрами, видами реквестов и т.д. or so they say. Короче изобретение велосипеда
+	//Поэтому чаще юзают 3 пати библиотеки
 	http.HandleFunc("/", pathHandler)
 	// http.HandleFunc("/contact", contactHandler)
 	fmt.Println("Starting the server on port :3000...")
