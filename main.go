@@ -5,11 +5,14 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	username := chi.URLParam(r, "username")
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, "<h1>ZULUL</h1>")
+	fmt.Fprintf(w, "<h1>ZULUL</h1> <p>Username: %s</p>", username)
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +53,8 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	//вместо кастомного роутера на коленке, пока просто как пример
 	r := chi.NewRouter()
-	r.Get("/", homeHandler)
+	r.Use(middleware.Logger)
+	r.Get("/{username}", homeHandler)
 	r.Get("/contact", contactHandler)
 	r.Get("/faq", faqHandler)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
