@@ -8,7 +8,7 @@ import (
 type User struct {
 	Name string
 	Age  int
-	Meta UserMeta
+	Meta UserMeta //nested sruct, спасибо что есть
 }
 
 type UserMeta struct {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -9,8 +10,24 @@ import (
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	username := chi.URLParam(r, "username")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	t, err := template.ParseFiles("templates/home.gohtml")
+	if err != nil {
+		fmt.Printf("Parsing template %v", err)
+		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
+		return
+	}
 
+	err = t.Execute(w, nil)
+	if err != nil {
+		fmt.Printf("Executing template %v", err)
+		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
+		return
+	}
+}
+
+func testUserHandler(w http.ResponseWriter, r *http.Request) {
+	username := chi.URLParam(r, "username")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	fmt.Fprintf(w, "<h1>ZULUL</h1> <p>Username: %s</p>", username)
 }
@@ -54,7 +71,8 @@ func main() {
 	//вместо кастомного роутера на коленке, пока просто как пример
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Get("/{username}", homeHandler)
+	r.Get("/", homeHandler)
+	r.Get("/{username}", testUserHandler) //это server-side rendering, еще есть api
 	r.Get("/contact", contactHandler)
 	r.Get("/faq", faqHandler)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
