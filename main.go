@@ -4,14 +4,16 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+// во избежания повторения кода, делаем ф-цию для всех хэндлеров
+func executeTemplate(w http.ResponseWriter, filepath string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	t, err := template.ParseFiles("templates/home.gohtml")
+	t, err := template.ParseFiles(filepath)
 	if err != nil {
 		fmt.Printf("Parsing template %v", err)
 		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
@@ -26,6 +28,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	tplPath := filepath.Join("templates", "home.gohtml")
+	executeTemplate(w, tplPath)
+}
+
 func testUserHandler(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -33,8 +40,8 @@ func testUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, "<h1>Contact Page</h1>")
+	tplPath := filepath.Join("templates", "contact.gohtml")
+	executeTemplate(w, tplPath)
 }
 
 func faqHandler(w http.ResponseWriter, r *http.Request) {
